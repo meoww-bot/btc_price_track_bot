@@ -13,7 +13,13 @@ cny_price=$(echo $res |  jq -r '.CNY["15m"]')
 coincola_price=$(curl -s 'https://www.coincola.com/api/v2/contentslist/list' --compressed -H 'Content-Type: application/x-www-form-urlencoded'  --data 'limit=1&offset=0&sort_order=GENERAL&country_code=CN&crypto_currency=BTC&currency=&type=SELL&payment_provider=' |jq -r '.data["advertisements"][0]["price"]')
 huobi_price=$(curl -s "https://otc-api.eiijo.cn/v1/data/trade-market?coinId=1&currency=1&tradeType=sell&currPage=1&payMethod=0&country=37&blockType=general&online=1&range=0&amount=" | jq -r '.data[0]["price"]')
 
-TEXT="BTC Price Monitor \nblockchain: \$$usd_price = ¥$cny_price \ncoincola:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t ¥$coincola_price \nhuobi:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t ¥$huobi_price"
+#TEXT="BTC Price Monitor \nblockchain: \$$usd_price = ¥$cny_price \ncoincola:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t ¥$coincola_price \nhuobi:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t ¥$huobi_price"
+
+coincola_premium=$(echo "scale=4;$coincola_price/$cny_price*100-100" | bc)
+huobi_premium=$(echo "scale=4;$huobi_price/$cny_price*100-100"| bc)
+
+TEXT="1 BTC = \$$usd_price = ¥$cny_price \n= ¥$coincola_price(coincola,$coincola_premium%) \n= ¥$huobi_price(huobi,$huobi_premium%)"
+
 
 if (( $(echo "$usd_price < $LOW_PRICE" |bc -l) )); then
     TEXT=$TEXT$sad_emoji
