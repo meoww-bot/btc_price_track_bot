@@ -20,7 +20,7 @@ huobi_premium=$(echo "scale=4;$huobi_price/$cny_price*100-100"| bc)
 
 TEXT="1 BTC = \$$usd_price = ¥$cny_price \n= ¥$coincola_price(coincola,$coincola_premium%) \n= ¥$huobi_price(huobi,$huobi_premium%)"
 
-
+# add emoji
 if (( $(echo "$usd_price < $LOW_PRICE" |bc -l) )); then
     TEXT=$TEXT$sad_emoji
 fi
@@ -28,6 +28,8 @@ fi
 if (( $(echo "$usd_price > $HIGH_PRICE" |bc -l) )); then
     TEXT=$TEXT$happy_emoji
 fi
+
+TEXT=$TEXT"\nUSDT(coincola) $usdt_coincola_price"
 
 echo -e $TEXT | curl -G --data-urlencode text@- "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID"
 #curl "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&disable_web_page_preview=1&text=$TEXT"
